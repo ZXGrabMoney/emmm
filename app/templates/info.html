@@ -1,0 +1,108 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../static/Font-Awesome-3.2.1/css/font-awesome.css">
+	<script src="../static/js/vue.min.js"></script>
+	<title>info</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		list-style: none;
+	}
+	#wrapper{
+		width: 450px;
+		height: 800px;
+		margin:0 auto;
+		background-color:rgb(252,251,249); 
+		padding-top: 10px;
+	}
+	form{
+		border: 1px solid rgb(245,240,233);
+		border-radius: 3px;
+		margin: 20px ;
+		padding: 10px;
+		background-color: #fff;
+	}
+	input,textarea{
+		border: none;
+		border-bottom: 0.5px solid ;
+		width: 80%;
+	}
+	li{
+		padding-left: 20px;
+		padding-top: 20px;
+
+	}
+	button{
+		margin: 0 20px;
+		width: 90%;
+		height: 3em;
+		border-radius: 3px;
+		border: none;
+		color: white;
+		background-color: rgb(162,212,231);
+	}
+</style>
+</head>
+<body>
+	<div id="wrapper">
+		<!-- <a href="">
+			<i class="icon-arrow-left"></i>
+		</a> -->
+		<form action="">
+			<ul>
+				<li>时间：<input v-model="time" type="text"></li>
+				<li>地点：<input v-model="location" type="text"></li>
+				<li>人数：<input v-model="people_max" type="text"></li>
+				<li>补充说明：</li>
+				<li>
+				<textarea v-moedl="description" name="" id="" cols="30" rows="10"></textarea>
+				</li>
+			</ul>
+			<button type="button" onclick="submitForm();">START</button>
+		</form>
+		<div id="navLoader"></div>
+	</div>
+		
+</body>
+	<script>
+		$("#navLoader").load( "./navTemplates.html" );
+	</script>	
+	<script>
+		var formData=new Vue({
+		  el: 'form',
+		  data: {
+		    time: '',
+		    location:'',
+		    people_max:'',
+		    description:''
+		  }
+		});
+		//填写后自动改变。可使用如formData.time的方式调用
+	
+        function submitForm() {
+			$.ajax({
+					type:'POST',
+					url:'/api/V1.0/pairs/release_pair',
+					contentType: "application/json; charset=utf-8",
+					data:JSON.stringify({	
+						time:formData.time,
+						location:formData.location,
+						people_max:formData.people_max,
+						description:formData.description
+					}),
+					dataType:'json'
+				})
+				.done(function(data){
+				alert('发布成功');
+				})
+			};
+	
+		
+	</script>
+</html>

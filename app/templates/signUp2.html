@@ -1,0 +1,177 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>signUp2</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../static/Font-Awesome-3.2.1/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="../static/js/vue.min.js"></script>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		list-style: none;
+	}
+	#wrapper{
+		width: 450px;
+		height: 900px;
+		margin:0 auto;
+		position: relative;
+		background-image: url(../static/img/signingPageBackground.png) ;
+		background-size: contain;
+	}
+	/* #backgroundImg{
+		width: 450px;
+		height: 800px;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: -1;
+	} */
+	#face{
+		position: absolute;
+		left: 180px;
+		top: 210px;
+		width: 110px;
+		height: 110px;
+		border-radius: 50%;
+		background-color: rgb(107,189,220);
+	}
+	#face i{
+		display: block;
+		margin-top: 45px;
+		margin-left: 48px;
+		color: white;
+		margin-top: 
+		padding-top: 140px;
+	}
+	/* #formTable{
+		background-color: rgb(243,243,243);
+	} */
+	form{
+		font-size: 20px;
+		padding-top: 350px;
+		padding-left: 70px;
+		width: 320px;
+		
+	}
+	input{
+		font-size: 15px;
+		margin-left: 15px;
+		border: none;
+		height: 50px;
+		margin-right: 20px;
+		display: inline-block;
+	}
+	#userLocation input{
+		width: 50px;
+	}
+	#gender {
+	}
+	#gender input{
+		margin: 5px;
+		height: 25px;
+	}
+	#gender label{
+		font-size: 15px;
+		color: rgb(117,117,117);
+	}
+	button{
+		margin-top: 40px;
+		background-color: rgb(1,186,212);
+		border: none;
+		color: #fff;
+		width: 320px;
+		height: 50px;
+		border-radius: 8px;
+	}
+	p{
+		font-size: 20px;
+		margin-top: 160px;
+		text-align: center;
+		color: rgb(204,204,204);
+	}
+	p a{
+		color: rgb(212,239,242);	
+	}
+	</style>
+</head>
+
+<body>
+	<div id="wrapper">	
+		<div id="face">	
+			<i class="icon-plus-sign"></i>
+		</div>
+		<!-- <img id="backgroundImg" src="./signingPageBackground.png"> -->
+		<div id="formTable">
+				
+			<form action="">
+					
+				<i class="icon-user"></i><input v-model="name" type="text" placeholder="姓名">
+				<hr>
+
+				<div id="gender">
+					<i class="icon-male"></i><i class="icon-female"></i><input v-model="gender" type="radio" value="man"> <label for="man">男</label> <input  v-model="gender" type="radio" value="woman"> <label for="woman">女</label>
+				</div>
+
+				<hr>
+				<div id="userLocation">
+					<i class="icon-map-marker"></i><input v-model="school" type="text" placeholder="学校"><input v-model="major" placeholder="专业" type="text"><input v-model="grade" placeholder="年级" type="text">
+				</div>
+				<hr>
+				<i class="icon-book"></i><input v-model="good_at" type="text" placeholder="擅长科目">
+				<hr>
+			
+				<button type="button" onclick="signUp2()">完成</button>
+				
+			
+			</form>
+		</div>
+		<p>Not registered yet?
+		<br>Please <a href="">Sign up</a></p>
+	
+	</div>
+
+
+	
+</body>
+<script>
+		var formData=new Vue({
+		  el: 'form',
+		  data: {
+		  	name:'',
+    		school:'',
+ 		    grade:'',
+   			major:'',
+   		    gender:'',  //man or woman
+   			good_at:''
+		  }
+		});
+		
+		function signUp2(argument) {
+		$.ajax({
+				type:'POST',
+				url:'/api/V1.0/user/set_info',
+				contentType: "application/json; charset=utf-8",
+				data:JSON.stringify({	
+				  	name:formData.name,
+		    		school:formData.school,
+		 		    grade:formData.grade,
+		   			major:formData.major,
+		   		    gender:formData.gender,  //man or woman
+		   			good_at:formData.good_at
+
+				}),
+				dataType:'json'
+			})
+			.done(function(data) {
+				if(data=1){
+					window.location.href='/viewingPage';//跳转
+				}
+				else{alert('设置失败。请填写完整信息')}
+			})
+			
+		}
+</script>
+</html>

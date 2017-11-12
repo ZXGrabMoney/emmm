@@ -1,0 +1,227 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>userHome</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../static/Font-Awesome-3.2.1/css/font-awesome.css">
+	<script src="../static/js/vue.min.js"></script>
+
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		list-style: none;
+	}
+	#wrapper{
+		width: 450px;
+		margin:0 auto;
+		/* background-color:rgb(252,251,249);  */
+		height: 800px;
+		position: relative;
+	}
+	#backgroundImg{
+		position: absolute;
+		margin: 0 auto;
+		z-index: -1;
+	}
+
+	.faceImg{
+		width: 40px;
+		border-radius: 50%;
+		overflow: hidden;
+	}
+	#userFace{
+		margin-top: 130px;
+		margin-left: 180px;
+		margin-bottom: 80px;
+		width: 100px;
+		
+	}
+	#info{
+		text-align: center;
+		line-height: 40px;
+		margin-bottom: 30px;
+	}
+	#routine{
+		background-color: rgb(249,248,247);
+		margin-bottom: 80px;
+	}
+	.routinePiece{
+		border-left: 5px solid rgb(175,218,233);
+		margin-left: 80px;
+		line-height: 40px;
+		padding-left: 50px;
+		padding-top: 20px;
+		padding-bottom: 10px;
+
+		position: relative;	
+	}
+	.routinePiece button{
+		position: absolute;
+		left: -23px;
+		top: 30px;
+
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		border: none;
+		
+		font-size: 20px;
+		font-weight: 30px;
+	}
+	.routinePiece a{
+		display: inline-block;
+		margin-top: -40px;
+		margin-right: 10px;
+		padding-left: 220px;
+
+	}
+	.routinePiece strong{
+		display: block;
+	}
+	.forthComing{
+
+	}
+	.overdue{
+
+	}
+	.now{
+		background-color: rgb(175,218,233);
+	}
+	</style>
+</head>
+
+<body>
+	<div id="wrapper">	
+		<img id="backgroundImg" src="../static/img/userHomeBackground.png" width="450px" height="800px">
+		<img id="userFace" class="faceImg" src="../static/img/face.jpg" alt="头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头头">		
+
+		<div id="info" >	
+			<strong >{{information.name}}</strong>
+			<p>
+				<i class="icon-map-marker"></i>{{information.school}} {{information.grade}} {{information.major}}
+			</p>
+			<p>
+				<i class="icon-book"></i>
+				{{information.good_at}}
+			</p>
+			<p>
+				<!-- 单身，未婚（？？？） -->
+				<a><i class="icon-edit"></i></a>
+			</p>
+		</div>
+
+		<div id="routine">
+			
+			<template v-for="item in items">
+				<div v-on:click="seeDetails(item.id)" class="routinePiece">
+					<button class="forthComing"></button><!--TODO时间判断-->
+					<strong>{{item.location}} {{item.date}}</strong>
+					<p><i class="icon-time"></i>{{item.release_time}}</p>
+					<a><i class="icon-user"></i>{{item.people_current}}/{{item.people_max}}人</a>
+				</div>
+			</template>
+
+		</div>
+		<div id="navLoader"></div>
+	</div>
+	
+</body>
+	<script>
+		$("#navLoader").load( "./navTemplates.html" );
+	</script>	
+	<script>
+
+			Vue.component();
+			var routineDetails=new Vue({
+			  el: '#routine',
+				data:{
+					items:[
+						{
+							location: '东九',
+							date:'下午 5-8节',
+							people_now:2,
+							people_max:3,
+							time:'12:15',
+							description:'暂无。'
+						},
+						{
+							location: '东九',
+							date:'下午 5-8节',
+							people_now:2,
+							people_max:3,
+							time:'12:15',
+							description:'暂无。'
+						},						
+						{
+							location: '东九',
+							date:'下午 5-8节',
+							people_now:2,
+							people_max:3,
+							time:'12:15',
+							description:'暂无。'
+						}
+					],
+				}
+			});
+			var userDetails =	new Vue({
+				el: '#info',
+				  data:{
+					information:{
+							name: 'CEOChang♂',
+							school:'华中科技大学',
+							grade:'大二',
+							major:'软件工程',
+							good_at:"面向对象、电路理论"
+						}
+				  }
+			})
+
+
+			function getRoutineDataViaAJAX() {
+				$.ajax({
+					type:'GET',
+					url:'/api/V1.0/user/get_pair_info',
+					dataType:'json'
+				})
+				.done(function (data) {
+					 console.log(data);
+					routineDetails.items=data;
+					return data;
+				})
+			};
+			function getUserDataViaAJAX() {
+				$.ajax({
+					type:'GET',
+					url:'/api/V1.0/user/get_info',
+					dataType:'json'
+				})
+				.done(function (data) {
+					 console.log(data);
+					userDetails.information=data;
+					return data;
+				})
+			};
+			getRoutineDataViaAJAX();
+			getUserDataViaAJAX();
+				
+			function seeDetails(pairId) {
+				$.ajax({
+					type:'GET',
+					url:'/api/V1.0/pairs/get_pair?id='+pairId,
+					dataType:'json'
+				})
+				.done(function (data) {
+
+				})	
+
+
+				window.location.href='/detail?id='+pairId;
+				//跳转到显示某配对的detail页面。配对的id为传入的参数
+			}
+
+
+	</script>
+
+</html>

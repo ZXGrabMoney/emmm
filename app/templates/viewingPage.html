@@ -1,0 +1,243 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>viewingPage</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../static/Font-Awesome-3.2.1/css/font-awesome.min.css">
+	
+	<script src="../static/js/vue.min.js"></script>
+	
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		list-style: none;
+	}
+	#wrapper{
+		width: 450px;
+		margin:0 auto;
+		background-color:rgb(252,251,249); 
+	}
+    #filterHeader ul{
+		border-bottom: 1px solid rgb(239,238,235);
+	}
+	#filterHeader li{
+		display: inline-block;
+		width: 23%;
+		text-align: center;
+		border-right: 1px solid;
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+	.pieces{
+		height: 50px;
+		position: relative;
+		padding: 25px;
+		padding-left: 90px;
+		line-height: 25px;
+		font-size: 120%;
+	}
+	.topLayer{
+		position: absolute;
+		height: 100px;
+		width: 450px;
+		left: 0;
+		top: 0;
+		z-index: 10;
+
+		opacity: 0;
+	}
+	.topLayer:hover{
+		opacity: 1;
+		visibility: visible;
+		background-color:rgba(200,219,228,0.8); 
+	}
+	.topLayer a{
+		position: relative;
+		top: 20px;
+		font-size: 50px;
+		margin-left: 200px;
+		background-color: rgb(160,201,220);
+		border-radius: 50%;
+
+	}
+	.pieces span,p{
+		font-size: 12px;
+	}
+	.pieces p{
+		position: absolute;
+		left: 100px;
+	}
+	#details{
+		position: absolute;
+		right: 20px;
+		top: 15px;
+		line-height: 35px;
+	}
+	.pieces img{
+		width: 40px;
+		border-radius: 50%;
+		overflow: hidden;
+		position: absolute;
+		left: 20px;
+	}
+
+	</style>
+</head>
+
+<body>
+	<div id="wrapper">	
+		<div id="navLoader"></div>
+		<div id="filterHeader">
+			<ul>
+				<li><i class="icon-filter"></i>筛选</li>
+				<li>时间</li>
+				<li>地点</li>
+				<li>人数</li>
+			</ul>
+		</div>
+		<div id="examplePieces">
+			<template v-for="item in items">
+				<!-- template标签不用js渲染时不显示 -->
+				
+				<!-- 
+				<p>{{item.message}}</p>
+				 -->
+				<!-- 
+				<div class="pieces">
+					<div class="topLayer">
+						<a href=""><i class="icon-plus"></i></a>
+					</div>
+					<img src="../static/img/face.jpg" alt="头头头头">
+					<strong>东九	下午 5-8节 </strong>
+					<div id="details">
+						<span><i class="icon-user"></i>2/3人</span>
+						<br>
+						<span><i class="icon-time"></i>12:15</span>	
+					</div>
+					<p>补充说明：</span>
+				</div>
+
+				 -->
+				<div class="pieces">
+					<div  v-on:click="showDetails(item.id)" class="topLayer">
+						<a v-on:click="applyToJoin(item.id)" ><i class="icon-plus"></i></a>
+					</div>
+					<img src="../static/img/face.jpg" alt="头头头头">
+					<strong>{{item.location}}	 {{item.time}} </strong>
+					<div id="details">
+						<span><i class="icon-user"></i>{{item.people_current}}/{{item.people_max}}人</span>
+						<br>
+						<span><i class="icon-time"></i>{{item.release_time}}</span>	
+					</div>
+					<p>补充说明：{{item.description}}</span>
+				</div>
+
+			</template>
+		</div>
+	</div>
+	
+</body>
+	<script>
+		 $("#navLoader").load( "./navTemplates.html" );
+	/*
+	$.ajax({
+    	url: "./navTemplates.html",
+	    cache: false,
+	    dataType: "html",
+   		success: function(data) {
+        $("#navLoader").html(data);
+
+    }
+});
+	*/
+	</script>	
+	<script>
+		var example1 = new Vue({
+			  el: '#examplePieces',
+
+				data:{
+					items:[
+						{
+							location: '东九',
+							date:'下午 5-8节',
+							people_current:2,
+							people_max:3,
+							time:'12:15',
+							description:'暂无。'
+						},
+						{
+							location: '东九',
+							date:'下午 5-8节',
+							people_current:2,
+							people_max:3,
+							time:'12:15',
+							description:'暂无。'
+						}						
+
+					]
+				},
+				methods:{
+						
+						applyToJoin:function(pairId){
+						joinPair(pairId);
+						},
+
+						showDetails:function(pairId) {
+						seeDetails(pairId);
+						}
+					}
+				
+			})
+
+		function getPairsViaAJAX() {
+			$.ajax({
+				type:'GET',
+				url:'/api/V1.0/pairs/get_pairs',
+				dataType:'json'
+			})
+			.done(function (data) {
+				console.log(data);
+				example1.items=data;
+				return data;
+			})
+		};
+		
+
+		getPairsViaAJAX();//成功则页面上显示后台读取得的数据
+		
+
+		function joinPair(pairId) {
+				$.ajax({
+					type:'POST',
+					url:'/api/V1.0/pairs/apply?id='+pairId+'&applicant_name=',
+				})
+				.done(function(data){
+					if (data=1) {
+						alert("加入成功！");
+					}
+					else{
+						alert("加入失败");
+					}
+				}
+					)
+				}
+
+			function seeDetails(pairId) {
+				$.ajax({
+					type:'GET',
+					url:'/api/V1.0/pairs/get_pair?id='+pairId,
+					dataType:'json'
+				})
+				.done(function (data) {
+
+				})	
+
+                console.log('seeDetails')
+				window.location.href='/detail?id='+pairId;
+				//跳转到显示某配对的detail页面。配对的id为传入的参数
+			}		
+            
+	</script>
+</html>

@@ -1,0 +1,169 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>signUp1</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../static/Font-Awesome-3.2.1/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="../static/js/vue.min.js"></script>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		list-style: none;
+	}
+	#wrapper{
+		width: 450px;
+		height: 900px;
+		margin:0 auto;
+		background-color:rgb(252,251,249); 
+		position: relative;
+		background-image: url(../static/img/signingPageBackground.png) ;
+		background-size: contain;
+	}
+	/* #backgroundImg{
+		width: 450px;
+		height: 800px;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: -1;
+	} */
+	#logo{
+		position: absolute;
+		left: 180px;
+		top: 210px;
+		width: 110px;
+	}
+	form{
+		font-size: 20px;
+		padding-top: 400px;
+		padding-left: 80px;
+		width: 320px;
+	}
+	form div{
+		background-color:rgb(232,227,227); 
+		padding-left: 10px;
+	}
+	form div i{
+		border-right: 1px solid rgb(178,176,176);
+		padding-right: 10px;
+		font-size: 20px;
+	}
+	form div a{
+		/*width: 80px;*/
+		margin-left: 20px;
+		background-color: #C2E1E4;
+		border-radius: 10px;
+		color: #68A2E4;
+		font-size: 18px;
+		display: inline-block;
+	}
+	input{
+		background-color:rgb(232,227,227); 
+		padding: 0 40px;
+		font-size: 15px;
+		border: none;
+		height: 50px;
+		border-radius: 5px;
+        width: 220px;
+        display:inline-block;
+	}
+	button{
+		margin-top: 60px;
+		background-color: rgb(1,186,212);
+		border: none;
+		color: #fff;
+		width: 320px;
+		height: 50px;
+		border-radius: 8px;
+	}
+
+	</style>
+</head>
+
+<body>
+	<div id="wrapper">	
+		<img id="logo" src="../static/img/logo.png">
+		<form action="">
+			<div>
+				<i class="icon-envelope-alt"></i><input v-model="mail" type="text" placeholder="请输入邮箱进行注册">
+			</div>
+			<div>
+				<i class="icon-circle-blank"></i>
+				<input v-model="vertification_code" style="width: 150px;padding-right: 0;" type="text" placeholder="请输入验证码">
+				<a v-on:click="sendVerification_code(formData.mail);">点击发送</a>
+			</div>
+			<div>
+				<i class="icon-lock"></i><input v-model="password" type="password" placeholder="   密码">
+			</div>	
+			<div>
+				<i class="icon-lock"></i><input type="password" placeholder="   确认密码">
+			</div>
+			<button type="button" onclick="signUp()">下一步</button>
+		</form>
+
+	</div>
+
+
+	
+</body>
+<script>
+		var formData=new Vue({
+		  
+		  el: 'form',
+		  
+		  data: {
+		  	mail:'',
+		  	password:'',
+		  	vertification_code:''
+		  },
+		  
+		  methods:{
+		   sendVerification_code: function (mailAddress) {
+				$.ajax({
+						type:'POST',
+						url:'/api/V1.0/user/send_mail?mail='+mailAddress,
+					})
+					.done(function(data) {
+						if (data.result==1) {
+							alert('发送成功');
+						}
+						else if(data.result==2){
+                            alert('邮箱已被注册');
+						}else
+						{
+							alert('发送失败，请检查邮箱填写');
+						}
+					})
+				}
+		  }
+
+
+		});
+	function signUp(argument) {
+		$.ajax({
+				type:'POST',
+				url:'/api/V1.0/user/register',
+				contentType: "application/json; charset=utf-8",
+				data:JSON.stringify({	
+					mail:formData.mail,
+					password:formData.password,
+					vertification_code:formData.vertification_code
+				}),
+				dataType:'json'
+			})
+			.done(function(data) {
+				if(data=1){
+					window.location.href='/signUp2';//跳转
+				}
+				else{alert('验证码不对。检查一下？')}
+			}
+			)
+		}
+
+
+
+</script>
+</html>

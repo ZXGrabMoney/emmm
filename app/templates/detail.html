@@ -1,0 +1,182 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>detail</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../static/Font-Awesome-3.2.1/css/font-awesome.min.css">
+	<script src="../static/js/vue.min.js"></script>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		list-style: none;
+	}
+	#wrapper{
+		width: 450px;
+		margin:0 auto;
+		background-color:rgb(252,251,249); 
+	}
+	ul{
+		margin: 0 20px;
+		padding: 0 40px;
+		background-color: rgb(248,247,243);
+	}
+	li{
+		margin: 5px;
+		height: 50px;
+		line-height: 50px;
+	}
+	li i{
+		margin-left: -20px;
+	}
+	li span{
+		height: 4em;
+	}
+	#members{
+		margin: 0 22px;
+	}
+	.memberCard{
+		display: inline-block;
+		background-color: rgb(245,240,233);
+		width: 180px;
+		text-align: center;
+		border-radius: 5px;
+		padding: 10px;
+		margin: 3px 0;
+		height: 200px;
+	}
+	.faceImg{
+		width: 40px;
+		border-radius: 50%;
+		overflow: hidden;
+	}
+	.memberCard p{
+		font-size: 15px;
+		line-height: 25px;
+	}
+	</style>
+</head>
+
+<body>
+	<div id="wrapper">	
+		<div id="navLoader"></div>
+		<ul id="details">
+			<li><i class="icon-calendar"></i>  时间 {{information.time}}</li>
+			<li><i class="icon-map-marker"></i>  地点 {{information.location}} </li>
+			<li><i class="icon-user" aria-hidden="true"></i>人数  {{information.people_max}}</li>
+			<li><span>补充说明：{{information.description}} </span></li>
+		</ul>
+		<div id="members">
+			<template v-for="item in items">
+				<div class="memberCard">
+					<img class="faceImg" src="../static/img/face.jpg" alt="头头头头头">
+					<p>
+					{{item.name}}
+					</p>
+					<p>{{item.school}}</p>
+					<p>{{item.grade}} {{item.major}}</p>
+					<p>擅长科目：</p>
+					<p>{{item.good_at}}、</p>
+
+				</div>				
+			</template>
+
+			<!-- <div class="memberCard">
+				<img class="faceImg" src="../static/img/face.jpg" alt="头头头头头">
+				<p>
+				CEOChang♂
+				</p>
+				<p>华中科技大学</p>
+				<p>大二 软件工程</p>
+				<p>擅长科目：</p>
+				<p>面向对象、电路理论</p>
+			
+			</div> -->
+
+		</div>
+	</div>
+	
+</body>
+	<script>
+		$("#navLoader").load( "./navTemplates.html" );
+	</script>	
+	<script>
+		
+		Vue.component();
+		var pairDetails=new Vue({
+				el:'#details',
+				data:{
+					information:{
+							location: '东九',
+							date:'下午 5-8节',
+							people_current:2,
+							people_max:3,
+							time:'12:15',
+							description:'暂无。'
+						}
+				  }
+		})
+		var memberDetails=new Vue({
+			  el: '#members',
+				data:{
+					items:[
+						{
+							name: 'CEOChang♂',
+							school:'华中科技大学',
+							grade:'大二',
+							major:'软件工程',
+							people_max:3,
+							good_at:"面向对象、电路理论"
+						},
+						{
+							name: 'CEOChang♂',
+							school:'华中科技大学',
+							grade:'大二',
+							major:'软件工程',
+							people_max:3,
+							good_at:"面向对象、电路理论"
+						},
+						{
+							name: 'CEOChang♂',
+							school:'华中科技大学',
+							grade:'大二',
+							major:'软件工程',
+							people_max:3,
+							good_at:"面向对象、电路理论"
+						}
+					]
+				}
+		});
+		
+
+		function getPairDataViaAJAX() {
+			$.ajax({
+				type:'GET',
+				url:'/api/V1.0/pairs/get_pair?id='+location.search.substring(4),
+				dataType:'json'
+			})
+			.done(function (data) {
+				 console.log(data);
+				 pairDetails.information=data;
+				return data;
+			})
+		};
+		function getMemberDataViaAJAX(){
+			$.ajax({
+				type:'GET',
+				url:'/api/V1.0/pairs/get_users?id='+location.search.substring(4),
+				dataType:'json'
+			})
+			.done(function (data) {
+				 console.log(data);
+				memberDetails.items=data;
+				return data;
+			})
+		}
+		getPairDataViaAJAX();
+		getMemberDataViaAJAX();
+		//成功则显示后台数据
+
+	</script>
+</html>

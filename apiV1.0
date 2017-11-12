@@ -1,0 +1,186 @@
+用户注册
+POST /api/V1.0/user/register
+{
+    mail:str,
+    password:str,
+    verification_code:int
+}
+return
+{
+    result:int  //成功返回1,否则返回0
+}
+
+发送邮件
+POST /api/V1.0/user/send_mail&mail=
+return
+{
+    result:int
+}
+
+用户登录
+GET /api/V1.0/user/login
+{
+    mail:str,
+    password:str
+}
+return
+{
+    result:int  //成功返回1,否则返回0
+}
+
+登录后设置用户信息
+POST /api/V1.0/user/set_info？mail=
+注：表单提交
+{
+    name:str,
+    school:str,
+    grade:str,
+    major:str,
+    gender:str,  //man or woman
+    good_at:str,  //以空格分隔如：“数学 英语 语文”
+    description:str,
+    connection:str,    //联系方式
+    //icon:file
+}
+return
+{
+    result:int    //是否设置成功
+}
+
+获取用户信息
+GET /api/V1.0/user/get_info?name=
+return
+{
+    name:str,
+    school:str,
+    grade:str,
+    major:str,
+    gender:str,  //man or woman
+    good_at:str,  //以空格分隔如：“数学 英语 语文”
+    description:str,
+    connection:str,
+    //icon_url:str
+}
+
+获取用户速配信息（速配记录，发布的速配单及状况）
+GET /api/V1.0/user/get_pair_info?name=&type=    //type为quick_pair或者pair
+PS:V1.1修订 type参数依然存在，固定为pair  即获取配对记录
+return
+//type=quick_pair  
+    [
+        {
+            time:str,
+            status:int
+        },
+        {}
+    ]
+//type=pair
+    [
+        {
+            time:str,
+            type:str,
+            status:int
+        },
+        {}
+    ]
+
+
+发布速配
+PS：V1.1修订  取消此api
+POST /api/V1.0/quick_pairs/release_pair?name=
+{
+    location:str
+}
+return
+{
+    result:int
+}
+
+返回速配结果(用户信息)
+PS：V1.1修订  取消此api
+GET /api/V1.0/quick_pairs/get_users?name=
+return
+[
+    {
+        name:str,
+        school:str,
+        grade:str,
+        major:str,
+        gender:str,  //man or woman
+        good_at:str,  //以空格分隔如：“数学 英语 语文”
+        description:str,
+        connection:str,
+        icon_url:str
+    },
+    {}
+]
+
+发送用户是否认可速配结果
+PS：V1.1修订  取消此api
+POST /api/V1.0/quick_pairs/send_result?name=&result=
+
+配对墙发布配对
+POST /api/V1.0/pairs/release_pair?name=
+{
+    type:str,
+    title:str,
+    description:str
+}
+return
+{
+   result:int
+}
+
+获取配对墙所有配对
+GET /api/V1.0/pairs/get_pairs?type=
+PS:不指定type则查询所有配对
+return
+[
+    {
+        id:int,     //配对唯一标识
+        type:str,
+        name:str,
+        title:str
+    }
+]
+
+获取单个配对信息
+GET /api/V1.0/pairs/get_pair?id=
+return
+{
+    id:int,
+    type:str,
+    title:str,
+    description:str,
+    name:str,
+    people_num:int  //已达成人数
+}
+
+获取申请人列表
+GET /api/V1.0/pairs/get_users?id=
+return
+[
+    {
+         name:str,
+        school:str,
+        grade:str,
+        major:str,
+        gender:str,  //man or woman
+        good_at:str,  //以空格分隔如：“数学 英语 语文”
+        description:str,
+        connection:str,
+        //icon_url:str
+
+    },
+    {}
+]
+
+同意或者拒绝申请
+POST /api/V1.0/pairs/send_result?id=
+{
+    applicant_name:str,
+    result:int
+}
+
+申请加入
+POST /api/V1.0/pairs/apply?id=&applicant_name=

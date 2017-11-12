@@ -1,0 +1,120 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>signIn</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../static/Font-Awesome-3.2.1/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="../static/js/vue.min.js"></script>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		list-style: none;
+	}
+	#wrapper{
+		width: 450px;
+		height: 900px;
+		margin:0 auto;
+		background-color:rgb(252,251,249); 
+		position: relative;
+		background-image: url(../static/img/signingPageBackground.png) ;
+		background-size: contain;
+	}
+	/* #backgroundImg{
+		width: 450px;
+		height: 800px;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: -1;
+	} */
+	#logo{
+		position: absolute;
+		left: 180px;
+		top: 210px;
+		width: 110px;
+	}
+	form{
+		font-size: 20px;
+		padding-top: 350px;
+		padding-left: 70px;
+		width: 320px;
+	}
+	input{
+		font-size: 15px;
+		margin-left: 15px;
+		border: none;
+		height: 50px;
+	}
+	button{
+		margin-top: 40px;
+		background-color: rgb(1,186,212);
+		border: none;
+		color: #fff;
+		width: 320px;
+		height: 50px;
+		border-radius: 8px;
+	}
+	p{
+		font-size: 20px;
+		margin-top: 160px;
+		text-align: center;
+		color: rgb(204,204,204);
+	}
+	p a{
+		color: rgb(212,239,242);	
+	}
+	</style>
+</head>
+
+<body>
+	<div id="wrapper">	
+		<img id="logo" src="../static/img/logo.png">
+		<!-- <img id="backgroundImg" src="./signingPageBackground.png"> -->
+		<form action="">
+			<i class="icon-user"> </i> <input v-model="mail" type="text" placeholder="Mail">
+			<hr>
+			<i class="icon-lock"> </i> <input v-model="password" type="password" placeholder="Password">
+			<br>
+			<button type="button" onclick="logIn()">SIGN IN</button>
+		</form>
+		<p>Not registered yet?
+		<br>Please <a href="/signUp1">Sign up</a></p>
+
+	</div>
+
+
+	
+</body>
+<script>
+		var formData=new Vue({
+		  el: 'form',
+		  data: {
+		  	mail:'',
+		  	password:''
+		  }
+		});
+	function logIn(argument) {
+		$.ajax({
+				type:'POST',
+				url:'/api/V1.0/user/login',
+				contentType: "application/json; charset=utf-8",
+				data:JSON.stringify({	
+					mail:formData.mail,
+					password:formData.password
+				}),
+				dataType:'json'
+			})
+			.done(function(data) {
+				if(data=1){
+					window.location.href='/viewingPage';//跳转
+				}
+				else{alert('密码不对。检查一下？')}
+			})
+			
+		}
+	
+</script>
+</html>
